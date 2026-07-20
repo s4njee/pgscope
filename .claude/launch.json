@@ -1,0 +1,22 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pgscope",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "tauri",
+        "dev"
+      ],
+      "port": 1425
+    },
+    {
+      "name": "pgscope-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev"
+      ],
+      "port": 1425
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  frontend:
+    name: Frontend (typecheck + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm exec vitest run
+
+  rust:
+    name: Rust (fmt + clippy + unit tests)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: rustfmt
+        working-directory: src-tauri
+        run: cargo fmt --check
+      - name: clippy
+        working-directory: src-tauri
+        run: cargo clippy --all-targets -- -D warnings
+      - name: unit tests
+        working-directory: src-tauri
+        run: cargo test --lib
+
+  integration:
+    name: Rust integration (live PostgreSQL)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: pgscope
+          POSTGRES_PASSWORD: pgscope
+          POSTGRES_DB: analytics_prod
+        ports:
+          - 54330:5432
+        options: >-
+          --health-cmd "pg_isready -U pgscope -d analytics_prod"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Install Tauri system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev \
+            libayatana-appindicator3-dev librsvg2-dev libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev
+      - name: Seed the fixture
+        env:
+          PGPASSWORD: pgscope
+        run: |
+          psql -h localhost -p 54330 -U pgscope -d analytics_prod -v ON_ERROR_STOP=1 -f dev/seed.sql
+          psql -h localhost -p 54330 -U pgscope -d analytics_prod -v ON_ERROR_STOP=1 -f dev/generate.sql
+      - name: Integration tests
+        working-directory: src-tauri
+        env:
+          PGSCOPE_TEST_URL: postgres://pgscope:pgscope@localhost:54330/analytics_prod
+        run: cargo test --features integration --test integration
+
+  build:
+    name: Build macOS bundle
+    runs-on: macos-latest
+    needs: [frontend, rust]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pgscope-macos
+          path: src-tauri/target/release/bundle/dmg/*.dmg
+          if-no-files-found: warn

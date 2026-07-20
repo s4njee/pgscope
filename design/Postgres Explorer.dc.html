@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#0e1116; }
+  a { color:#4e9cd8; text-decoration:none; }
+  a:hover { color:#7cb9e8; text-decoration:underline; }
+  ::selection { background:rgba(78,156,216,0.35); }
+  ::-webkit-scrollbar { width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb { background:#232b3a; border-radius:5px; border:2px solid #0c0f15; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  @keyframes blink { 0%,49% {opacity:1;} 50%,100% {opacity:0;} }
+</style>
+</helmet>
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:36px; background:radial-gradient(1200px 700px at 30% 0%, #1a2029 0%, #0e1116 60%); font-family:'IBM Plex Mono', monospace; box-sizing:border-box;">
+  <div style="width:1400px; flex-shrink:0; height:880px; border-radius:12px; overflow:hidden; background:#0c0f15; box-shadow:0 0 0 1px rgba(255,255,255,0.07), 0 24px 80px rgba(0,0,0,0.6); display:flex; flex-direction:column;">
+
+    <!-- Titlebar -->
+    <div style="height:42px; flex-shrink:0; background:#12161e; border-bottom:1px solid #1f2633; display:flex; align-items:center; padding:0 14px; gap:14px;">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="width:12px; height:12px; border-radius:50%; background:#ff5f57;"></div>
+        <div style="width:12px; height:12px; border-radius:50%; background:#febc2e;"></div>
+        <div style="width:12px; height:12px; border-radius:50%; background:#28c840;"></div>
+      </div>
+      <div style="flex:1; text-align:center; font-size:12px; font-weight:500; color:#8b99b0;">pgscope — analytics_prod@localhost:5432</div>
+      <div style="display:flex; align-items:center; gap:6px; padding:3px 10px; border-radius:20px; background:#161c26; border:1px solid #1f2633;">
+        <div style="width:7px; height:7px; border-radius:50%; background:#4ec98a;"></div>
+        <span style="font-size:10.5px; color:#6b7a92;">connected · 12ms</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div style="height:40px; flex-shrink:0; background:#0f131b; border-bottom:1px solid #1f2633; display:flex; align-items:center; padding:0 14px; gap:16px;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:#6b7a92;">
+        <span style="color:#8b99b0;">analytics_prod</span><span style="color:#3d475a;">▸</span>
+        <span style="color:#8b99b0;">public</span><span style="color:#3d475a;">▸</span>
+        <span style="color:#cdd6e4; font-weight:600;">events</span>
+      </div>
+      <div style="display:flex; gap:2px; background:#12161e; border:1px solid #1f2633; border-radius:7px; padding:2px;">
+        <div onClick="{{ setData }}" style-hover="opacity:0.85" style="cursor:pointer; padding:4px 14px; border-radius:5px; font-size:11.5px; font-weight:500; background:{{ dataTabBg }}; color:{{ dataTabColor }};">Data</div>
+        <div onClick="{{ setRel }}" style-hover="opacity:0.85" style="cursor:pointer; padding:4px 14px; border-radius:5px; font-size:11.5px; font-weight:500; background:{{ relTabBg }}; color:{{ relTabColor }};">Relationships</div>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:8px; width:260px; padding:5px 10px; border-radius:6px; background:#12161e; border:1px solid #1f2633;">
+        <span style="color:#4a566b; font-size:11px;">⌕</span>
+        <span style="font-size:11px; color:#4a566b;">WHERE event_name = …</span>
+      </div>
+      <div style-hover="background:#1a212e" style="cursor:pointer; padding:5px 12px; border-radius:6px; border:1px solid #1f2633; background:#161c26; font-size:11px; color:#8b99b0;">↻ Refresh</div>
+      <div style-hover="opacity:0.9" style="cursor:pointer; padding:5px 12px; border-radius:6px; background:rgba(78,156,216,0.16); border:1px solid rgba(78,156,216,0.4); font-size:11px; color:#7cb9e8; font-weight:500;">+ New query</div>
+    </div>
+
+    <!-- Body -->
+    <div style="flex:1; display:flex; min-height:0;">
+
+      <!-- Sidebar -->
+      <div style="width:236px; flex-shrink:0; background:#0f131b; border-right:1px solid #1f2633; display:flex; flex-direction:column; overflow-y:auto; padding:10px 0;">
+        <div style="padding:4px 14px 6px; font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b;">DATABASE</div>
+        <div style="display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; gap:6px; padding:4px 14px; font-size:12px; color:#cdd6e4;"><span style="color:#4a566b; font-size:9px;">▾</span><span style="color:#d9b26a;">◆</span> analytics_prod</div>
+          <div style="display:flex; align-items:center; gap:6px; padding:4px 14px 4px 28px; font-size:12px; color:#8b99b0;"><span style="color:#4a566b; font-size:9px;">▾</span> public <span style="margin-left:auto; font-size:10px; color:#4a566b;">7 tables</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> event_properties<span style="margin-left:auto; font-size:10px; color:#4a566b;">2.1M</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#cdd6e4; background:rgba(78,156,216,0.13); border-left:2px solid #4e9cd8; margin-left:-2px; font-weight:500;"><span style="width:8px; height:8px; border:1.5px solid #4e9cd8; border-radius:2px; flex-shrink:0;"></span> events<span style="margin-left:auto; font-size:10px; color:#7cb9e8;">48.2M</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> experiment_exposures<span style="margin-left:auto; font-size:10px; color:#4a566b;">910K</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> funnels<span style="margin-left:auto; font-size:10px; color:#4a566b;">214</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> page_views<span style="margin-left:auto; font-size:10px; color:#4a566b;">31.8M</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> sessions<span style="margin-left:auto; font-size:10px; color:#4a566b;">6.4M</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px 4px 44px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="width:8px; height:8px; border:1.5px solid #4a566b; border-radius:2px; flex-shrink:0;"></span> users<span style="margin-left:auto; font-size:10px; color:#4a566b;">1.2M</span></div>
+          <div style="display:flex; align-items:center; gap:6px; padding:4px 14px 4px 28px; font-size:12px; color:#6b7a92;"><span style="color:#4a566b; font-size:9px;">▸</span> views <span style="margin-left:auto; font-size:10px; color:#4a566b;">3</span></div>
+          <div style="display:flex; align-items:center; gap:6px; padding:4px 14px 4px 28px; font-size:12px; color:#6b7a92;"><span style="color:#4a566b; font-size:9px;">▸</span> analytics <span style="margin-left:auto; font-size:10px; color:#4a566b;">schema</span></div>
+        </div>
+        <div style="height:1px; background:#1f2633; margin:12px 14px;"></div>
+        <div style="padding:0 14px 6px; font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b;">SAVED QUERIES</div>
+        <div style="display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="color:#d9b26a; font-size:10px;">▪</span> dau_last_30d<span style="margin-left:auto; font-size:10px; color:#4a566b;">.sql</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="color:#d9b26a; font-size:10px;">▪</span> funnel_signup_activate<span style="margin-left:auto; font-size:10px; color:#4a566b;">.sql</span></div>
+          <div style="display:flex; align-items:center; gap:7px; padding:4px 14px; font-size:12px; color:#8b99b0;" style-hover="background:#141924"><span style="color:#d9b26a; font-size:10px;">▪</span> top_events_hourly<span style="margin-left:auto; font-size:10px; color:#4a566b;">.sql</span></div>
+        </div>
+        <div style="height:1px; background:#1f2633; margin:12px 14px;"></div>
+        <div style="padding:0 14px 6px; font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b;">HISTORY</div>
+        <div style="display:flex; flex-direction:column;">
+          <div style="padding:4px 14px; font-size:11px; color:#6b7a92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" style-hover="background:#141924"><span style="color:#4e9cd8;">\d</span> events <span style="color:#3d475a;">· 2m</span></div>
+          <div style="padding:4px 14px; font-size:11px; color:#6b7a92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" style-hover="background:#141924"><span style="color:#4e9cd8;">SELECT</span> event_name, count(*)… <span style="color:#3d475a;">· 9m</span></div>
+          <div style="padding:4px 14px; font-size:11px; color:#6b7a92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" style-hover="background:#141924"><span style="color:#4e9cd8;">\timing</span> on <span style="color:#3d475a;">· 12m</span></div>
+          <div style="padding:4px 14px; font-size:11px; color:#6b7a92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" style-hover="background:#141924"><span style="color:#4e9cd8;">EXPLAIN ANALYZE</span> SELECT… <span style="color:#3d475a;">· 31m</span></div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div style="flex:1; display:flex; min-width:0; min-height:0;">
+
+        <sc-if value="{{ isData }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1; display:flex; flex-direction:column; min-width:0; background:#0c0f15;">
+            <!-- Grid header -->
+            <div style="display:grid; grid-template-columns:44px 110px 104px 150px 132px 1fr 215px; border-bottom:1px solid #1f2633; background:#10141b; flex-shrink:0;">
+              <div style="padding:7px 10px; font-size:10px; color:#4a566b; border-right:1px solid #1a212e;">#</div>
+              <div style="padding:5px 10px; border-right:1px solid #1a212e;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">event_id</div><div style="font-size:9.5px; color:#4a566b;">bigint · PK</div></div>
+              <div style="padding:5px 10px; border-right:1px solid #1a212e;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">user_id</div><div style="font-size:9.5px; color:#4a566b;">text · FK</div></div>
+              <div style="padding:5px 10px; border-right:1px solid #1a212e;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">session_id</div><div style="font-size:9.5px; color:#4a566b;">uuid · FK</div></div>
+              <div style="padding:5px 10px; border-right:1px solid #1a212e;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">event_name ↓</div><div style="font-size:9.5px; color:#4a566b;">text</div></div>
+              <div style="padding:5px 10px; border-right:1px solid #1a212e;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">properties</div><div style="font-size:9.5px; color:#4a566b;">jsonb</div></div>
+              <div style="padding:5px 10px;"><div style="font-size:11.5px; font-weight:600; color:#cdd6e4;">created_at</div><div style="font-size:9.5px; color:#4a566b;">timestamptz</div></div>
+            </div>
+            <!-- Rows -->
+            <div style="flex:1; overflow-y:auto;">
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="12">
+                <div style="display:grid; grid-template-columns:44px 110px 104px 150px 132px 1fr 215px; border-bottom:1px solid #131824; font-size:11.5px; background:{{ r.bg }};" style-hover="background:#12161f">
+                  <div style="padding:5px 10px; color:#3d475a;">{{ r.n }}</div>
+                  <div style="padding:5px 10px; color:#8b99b0;">{{ r.id }}</div>
+                  <div style="padding:5px 10px; color:#6b7a92;">{{ r.user }}</div>
+                  <div style="padding:5px 10px; color:#6b7a92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.session }}</div>
+                  <div style="padding:5px 10px; color:#7cb9e8;">{{ r.name }}</div>
+                  <div style="padding:5px 10px; color:#d9b26a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.props }}</div>
+                  <div style="padding:5px 10px; color:#6b7a92;">{{ r.ts }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <!-- Paging footer -->
+            <div style="height:32px; flex-shrink:0; border-top:1px solid #1f2633; background:#10141b; display:flex; align-items:center; padding:0 12px; gap:12px; font-size:11px; color:#6b7a92;">
+              <div style="display:flex; gap:4px;">
+                <span style="padding:2px 8px; border:1px solid #1f2633; border-radius:4px; color:#4a566b;">⇤</span>
+                <span style="padding:2px 8px; border:1px solid #1f2633; border-radius:4px; color:#4a566b;">←</span>
+                <span style="padding:2px 8px; border:1px solid #1f2633; border-radius:4px; color:#8b99b0; cursor:pointer;" style-hover="background:#1a212e">→</span>
+                <span style="padding:2px 8px; border:1px solid #1f2633; border-radius:4px; color:#8b99b0; cursor:pointer;" style-hover="background:#1a212e">⇥</span>
+              </div>
+              <span>rows 1–50 of <span style="color:#8b99b0;">48,213,904</span></span>
+              <div style="flex:1;"></div>
+              <span>SELECT * FROM events ORDER BY created_at DESC — <span style="color:#4ec98a;">11.8 ms</span></span>
+            </div>
+          </div>
+
+          <!-- Details panel -->
+          <sc-if value="{{ showDetails }}" hint-placeholder-val="{{ true }}">
+            <div style="width:266px; flex-shrink:0; border-left:1px solid #1f2633; background:#0f131b; overflow-y:auto; padding:14px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                <span style="font-size:13px; font-weight:600; color:#cdd6e4;">events</span>
+                <span style="font-size:9.5px; padding:2px 7px; border-radius:4px; background:rgba(78,156,216,0.16); color:#7cb9e8; border:1px solid rgba(78,156,216,0.3);">TABLE</span>
+              </div>
+              <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b; margin-bottom:6px;">COLUMNS</div>
+              <div style="display:flex; flex-direction:column; gap:1px; margin-bottom:16px;">
+                <sc-for list="{{ cols }}" as="c" hint-placeholder-count="6">
+                  <div style="display:flex; align-items:baseline; gap:8px; padding:4px 6px; border-radius:4px;" style-hover="background:#141924">
+                    <span style="font-size:11.5px; color:#cdd6e4;">{{ c.name }}</span>
+                    <span style="font-size:10px; color:#4a566b; margin-left:auto;">{{ c.type }}</span>
+                    <span style="font-size:8.5px; padding:1px 4px; border-radius:3px; background:{{ c.badgeBg }}; color:{{ c.badgeColor }};">{{ c.badge }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b; margin-bottom:6px;">INDEXES</div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+                <div><div style="font-size:11px; color:#8b99b0;">events_pkey</div><div style="font-size:9.5px; color:#4a566b;">btree (event_id) · unique</div></div>
+                <div><div style="font-size:11px; color:#8b99b0;">idx_events_user_created</div><div style="font-size:9.5px; color:#4a566b;">btree (user_id, created_at DESC)</div></div>
+                <div><div style="font-size:11px; color:#8b99b0;">idx_events_name</div><div style="font-size:9.5px; color:#4a566b;">btree (event_name)</div></div>
+                <div><div style="font-size:11px; color:#8b99b0;">brin_events_created_at</div><div style="font-size:9.5px; color:#4a566b;">brin (created_at)</div></div>
+              </div>
+              <div style="font-size:10px; font-weight:600; letter-spacing:0.08em; color:#4a566b; margin-bottom:6px;">STATS</div>
+              <div style="display:flex; flex-direction:column; gap:4px; font-size:11px;">
+                <div style="display:flex; justify-content:space-between;"><span style="color:#6b7a92;">est. rows</span><span style="color:#8b99b0;">48,213,904</span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:#6b7a92;">total size</span><span style="color:#8b99b0;">12 GB</span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:#6b7a92;">indexes</span><span style="color:#8b99b0;">3.1 GB</span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="color:#6b7a92;">last autovacuum</span><span style="color:#8b99b0;">41 min ago</span></div>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ isRel }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; position:relative; overflow:hidden; background:#0c0f15; background-image:radial-gradient(#1a212e 1px, transparent 1px); background-size:24px 24px;">
+            <svg style="position:absolute; inset:0; width:100%; height:100%;">
+              <line x1="278" y1="128" x2="392" y2="118" stroke="#3a5f80" stroke-width="1.5"></line>
+              <line x1="600" y1="118" x2="726" y2="208" stroke="#3a5f80" stroke-width="1.5"></line>
+              <line x1="278" y1="150" x2="726" y2="252" stroke="#3a5f80" stroke-width="1.5"></line>
+              <line x1="496" y1="216" x2="496" y2="330" stroke="#3a5f80" stroke-width="1.5"></line>
+              <line x1="170" y1="216" x2="170" y2="330" stroke="#3a5f80" stroke-width="1.5"></line>
+              <circle cx="278" cy="128" r="3" fill="#4e9cd8"></circle><circle cx="392" cy="118" r="3" fill="#4e9cd8"></circle>
+              <circle cx="600" cy="118" r="3" fill="#4e9cd8"></circle><circle cx="726" cy="208" r="3" fill="#4e9cd8"></circle>
+              <circle cx="278" cy="150" r="3" fill="#4e9cd8"></circle><circle cx="726" cy="252" r="3" fill="#4e9cd8"></circle>
+              <circle cx="496" cy="216" r="3" fill="#4e9cd8"></circle><circle cx="496" cy="330" r="3" fill="#4e9cd8"></circle>
+              <circle cx="170" cy="216" r="3" fill="#4e9cd8"></circle><circle cx="170" cy="330" r="3" fill="#4e9cd8"></circle>
+            </svg>
+            <!-- users -->
+            <div style="position:absolute; left:70px; top:60px; width:208px; border:1px solid #263041; border-radius:7px; background:#10141b; box-shadow:0 8px 24px rgba(0,0,0,0.4); overflow:hidden;">
+              <div style="padding:7px 12px; background:#161c26; border-bottom:1px solid #1f2633; font-size:12px; font-weight:600; color:#7cb9e8;">users</div>
+              <div style="padding:6px 0; font-size:11px;">
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#cdd6e4;">user_id</span><span style="margin-left:auto; color:#4a566b;">text</span><span style="color:#d9b26a; font-size:9px;">PK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">email</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">plan</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">created_at</span><span style="margin-left:auto; color:#4a566b;">timestamptz</span></div>
+              </div>
+            </div>
+            <!-- sessions -->
+            <div style="position:absolute; left:392px; top:40px; width:208px; border:1px solid #263041; border-radius:7px; background:#10141b; box-shadow:0 8px 24px rgba(0,0,0,0.4); overflow:hidden;">
+              <div style="padding:7px 12px; background:#161c26; border-bottom:1px solid #1f2633; font-size:12px; font-weight:600; color:#7cb9e8;">sessions</div>
+              <div style="padding:6px 0; font-size:11px;">
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#cdd6e4;">session_id</span><span style="margin-left:auto; color:#4a566b;">uuid</span><span style="color:#d9b26a; font-size:9px;">PK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">user_id</span><span style="margin-left:auto; color:#4a566b;">text</span><span style="color:#4e9cd8; font-size:9px;">FK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">device</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">started_at</span><span style="margin-left:auto; color:#4a566b;">timestamptz</span></div>
+              </div>
+            </div>
+            <!-- events -->
+            <div style="position:absolute; left:726px; top:140px; width:224px; border:1px solid rgba(78,156,216,0.5); border-radius:7px; background:#10141b; box-shadow:0 8px 24px rgba(0,0,0,0.4), 0 0 0 3px rgba(78,156,216,0.08); overflow:hidden;">
+              <div style="padding:7px 12px; background:rgba(78,156,216,0.14); border-bottom:1px solid rgba(78,156,216,0.3); font-size:12px; font-weight:600; color:#7cb9e8;">events</div>
+              <div style="padding:6px 0; font-size:11px;">
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#cdd6e4;">event_id</span><span style="margin-left:auto; color:#4a566b;">bigint</span><span style="color:#d9b26a; font-size:9px;">PK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">session_id</span><span style="margin-left:auto; color:#4a566b;">uuid</span><span style="color:#4e9cd8; font-size:9px;">FK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">user_id</span><span style="margin-left:auto; color:#4a566b;">text</span><span style="color:#4e9cd8; font-size:9px;">FK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">event_name</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">properties</span><span style="margin-left:auto; color:#4a566b;">jsonb</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">created_at</span><span style="margin-left:auto; color:#4a566b;">timestamptz</span></div>
+              </div>
+            </div>
+            <!-- page_views -->
+            <div style="position:absolute; left:392px; top:330px; width:208px; border:1px solid #263041; border-radius:7px; background:#10141b; box-shadow:0 8px 24px rgba(0,0,0,0.4); overflow:hidden;">
+              <div style="padding:7px 12px; background:#161c26; border-bottom:1px solid #1f2633; font-size:12px; font-weight:600; color:#7cb9e8;">page_views</div>
+              <div style="padding:6px 0; font-size:11px;">
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#cdd6e4;">view_id</span><span style="margin-left:auto; color:#4a566b;">bigint</span><span style="color:#d9b26a; font-size:9px;">PK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">session_id</span><span style="margin-left:auto; color:#4a566b;">uuid</span><span style="color:#4e9cd8; font-size:9px;">FK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">path</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">referrer</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+              </div>
+            </div>
+            <!-- experiment_exposures -->
+            <div style="position:absolute; left:70px; top:330px; width:208px; border:1px solid #263041; border-radius:7px; background:#10141b; box-shadow:0 8px 24px rgba(0,0,0,0.4); overflow:hidden;">
+              <div style="padding:7px 12px; background:#161c26; border-bottom:1px solid #1f2633; font-size:12px; font-weight:600; color:#7cb9e8;">experiment_exposures</div>
+              <div style="padding:6px 0; font-size:11px;">
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#cdd6e4;">exposure_id</span><span style="margin-left:auto; color:#4a566b;">bigint</span><span style="color:#d9b26a; font-size:9px;">PK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">user_id</span><span style="margin-left:auto; color:#4a566b;">text</span><span style="color:#4e9cd8; font-size:9px;">FK</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">experiment</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+                <div style="display:flex; padding:3px 12px; gap:8px;"><span style="color:#8b99b0;">variant</span><span style="margin-left:auto; color:#4a566b;">text</span></div>
+              </div>
+            </div>
+            <div style="position:absolute; right:16px; bottom:14px; font-size:10px; color:#4a566b;">public schema · 5 of 7 tables · FK graph</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <sc-if value="{{ termOpen }}" hint-placeholder-val="{{ true }}">
+      <div style="flex-shrink:0; border-top:1px solid #1f2633; display:flex; flex-direction:column; background:#0a0d12;">
+        <div style="height:30px; display:flex; align-items:center; padding:0 12px; gap:10px; background:#10141b; border-bottom:1px solid #1a212e;">
+          <span style="font-size:10.5px; font-weight:600; color:#8b99b0;">psql</span>
+          <span style="font-size:10.5px; color:#4a566b;">analytics_prod · session 1</span>
+          <div style="flex:1;"></div>
+          <span style="font-size:10px; color:#4ec98a;">Timing on</span>
+          <span style="font-size:10.5px; color:#4a566b; cursor:pointer;" style-hover="color:#8b99b0">clear</span>
+          <span onClick="{{ collapseTerm }}" style="font-size:10.5px; color:#4a566b; cursor:pointer;" style-hover="color:#8b99b0">▾ collapse</span>
+        </div>
+        <pre style="margin:0; padding:10px 14px; height:212px; overflow-y:auto; font-family:'IBM Plex Mono', monospace; font-size:12px; line-height:1.5; color:#aebacd;"><span style="color:#4e9cd8;">analytics_prod=#</span> SELECT event_name, count(*) FROM events
+<span style="color:#4e9cd8;">analytics_prod-#</span>   WHERE created_at &gt; now() - interval '24 hours'
+<span style="color:#4e9cd8;">analytics_prod-#</span>   GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+<span style="color:#6b7a92;">  event_name   |  count
+---------------+---------</span>
+ page_view     | 1842311
+ session_start |  409112
+ click         |  322480
+ signup        |   12055
+ purchase      |    4310
+<span style="color:#6b7a92;">(5 rows)
+
+Time: 428.116 ms</span>
+
+<span style="color:#4e9cd8;">analytics_prod=#</span> <span style="display:inline-block; width:7px; height:14px; background:#4e9cd8; vertical-align:text-bottom; animation:blink 1.1s step-end infinite;"></span></pre>
+      </div>
+    </sc-if>
+    <sc-if value="{{ termClosed }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ expandTerm }}" style="flex-shrink:0; height:28px; border-top:1px solid #1f2633; background:#10141b; display:flex; align-items:center; padding:0 12px; gap:10px; cursor:pointer;" style-hover="background:#141924">
+        <span style="font-size:10.5px; font-weight:600; color:#8b99b0;">psql</span>
+        <span style="font-size:10.5px; color:#4a566b;">analytics_prod</span>
+        <div style="flex:1;"></div>
+        <span style="font-size:10.5px; color:#4a566b;">▴ expand</span>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;activeTab&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;data&quot;, &quot;relationships&quot;], &quot;default&quot;: &quot;data&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;View&quot;},
+  &quot;showDetails&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;View&quot;},
+  &quot;terminalCollapsed&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;View&quot;}
+}">
+class Component extends DCLogic {
+  state = { tab: null, term: null };
+  renderVals() {
+    const tab = this.state.tab ?? this.props.activeTab ?? 'data';
+    const collapsed = this.state.term ?? this.props.terminalCollapsed ?? false;
+    const sel = 'rgba(78,156,216,0.10)';
+    const rows = [
+      { id: '48213904', user: 'u_8f3c21', session: '9b2e41aa-77f0-4c…', name: 'page_view', props: '{"path": "/pricing"}', ts: '2026-07-18 09:41:22.114+00' },
+      { id: '48213903', user: 'u_2d91be', session: 'c04a913e-51d2-48…', name: 'click', props: '{"btn": "cta_hero"}', ts: '2026-07-18 09:41:21.870+00' },
+      { id: '48213902', user: 'u_8f3c21', session: '9b2e41aa-77f0-4c…', name: 'page_view', props: '{"path": "/docs/psql"}', ts: '2026-07-18 09:41:20.512+00' },
+      { id: '48213901', user: 'u_c07f44', session: '18d3fa02-9ac1-4e…', name: 'signup', props: '{"plan": "pro", "ref": "hn"}', ts: '2026-07-18 09:41:19.933+00', bg: sel },
+      { id: '48213900', user: 'u_51aa02', session: '7e99cd10-24b8-4d…', name: 'session_start', props: '{"device": "mobile"}', ts: '2026-07-18 09:41:18.207+00' },
+      { id: '48213899', user: 'u_51aa02', session: '7e99cd10-24b8-4d…', name: 'page_view', props: '{"path": "/"}', ts: '2026-07-18 09:41:18.201+00' },
+      { id: '48213898', user: 'u_09e7d3', session: 'f21c50bb-8e04-47…', name: 'feature_used', props: '{"feature": "export_csv"}', ts: '2026-07-18 09:41:16.644+00' },
+      { id: '48213897', user: 'u_c07f44', session: '18d3fa02-9ac1-4e…', name: 'page_view', props: '{"path": "/signup"}', ts: '2026-07-18 09:41:15.098+00' },
+      { id: '48213896', user: 'u_7b30ff', session: 'a8d1e6c4-3f27-49…', name: 'purchase', props: '{"sku": "team_annual", "mrr": 79}', ts: '2026-07-18 09:41:13.775+00' },
+      { id: '48213895', user: 'u_2d91be', session: 'c04a913e-51d2-48…', name: 'page_view', props: '{"path": "/changelog"}', ts: '2026-07-18 09:41:12.430+00' },
+      { id: '48213894', user: 'u_e44b19', session: '5b70a2dd-c9e3-4a…', name: 'click', props: '{"btn": "nav_pricing"}', ts: '2026-07-18 09:41:11.986+00' },
+      { id: '48213893', user: 'u_09e7d3', session: 'f21c50bb-8e04-47…', name: 'page_view', props: '{"path": "/dashboards/12"}', ts: '2026-07-18 09:41:10.312+00' },
+      { id: '48213892', user: 'u_7b30ff', session: 'a8d1e6c4-3f27-49…', name: 'page_view', props: '{"path": "/checkout"}', ts: '2026-07-18 09:41:09.554+00' },
+      { id: '48213891', user: 'u_a1c8e0', session: '30fe81b2-6d15-4b…', name: 'session_start', props: '{"device": "desktop"}', ts: '2026-07-18 09:41:08.119+00' },
+      { id: '48213890', user: 'u_a1c8e0', session: '30fe81b2-6d15-4b…', name: 'page_view', props: '{"path": "/login"}', ts: '2026-07-18 09:41:08.101+00' },
+      { id: '48213889', user: 'u_5fd2c7', session: 'e6a94f08-1b3c-4f…', name: 'experiment_view', props: '{"exp": "onboarding_v2", "variant": "b"}', ts: '2026-07-18 09:41:06.870+00' },
+    ].map((r, i) => ({ ...r, n: i + 1, bg: r.bg ?? 'transparent' }));
+    const pk = { badgeBg: 'rgba(217,178,106,0.15)', badgeColor: '#d9b26a' };
+    const nn = { badgeBg: 'rgba(107,122,146,0.15)', badgeColor: '#6b7a92' };
+    const fk = { badgeBg: 'rgba(78,156,216,0.15)', badgeColor: '#7cb9e8' };
+    const cols = [
+      { name: 'event_id', type: 'bigint', badge: 'PK', ...pk },
+      { name: 'user_id', type: 'text', badge: 'FK', ...fk },
+      { name: 'session_id', type: 'uuid', badge: 'FK', ...fk },
+      { name: 'event_name', type: 'text', badge: 'NN', ...nn },
+      { name: 'properties', type: 'jsonb', badge: 'NN', ...nn },
+      { name: 'created_at', type: 'timestamptz', badge: 'NN', ...nn },
+    ];
+    const on = { bg: 'rgba(78,156,216,0.18)', color: '#9ecdf0' };
+    const off = { bg: 'transparent', color: '#6b7a92' };
+    return {
+      isData: tab === 'data', isRel: tab === 'relationships',
+      dataTabBg: (tab === 'data' ? on : off).bg, dataTabColor: (tab === 'data' ? on : off).color,
+      relTabBg: (tab === 'relationships' ? on : off).bg, relTabColor: (tab === 'relationships' ? on : off).color,
+      setData: () => this.setState({ tab: 'data' }),
+      setRel: () => this.setState({ tab: 'relationships' }),
+      termOpen: !collapsed, termClosed: collapsed,
+      collapseTerm: () => this.setState({ term: true }),
+      expandTerm: () => this.setState({ term: false }),
+      rows, cols,
+      showDetails: this.props.showDetails ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

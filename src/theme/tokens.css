@@ -1,0 +1,117 @@
+/*
+ * pgscope design tokens.
+ * Every value is taken verbatim from design/README.md — the design is the source
+ * of truth. Components must reference these variables, never raw hex literals.
+ */
+
+:root {
+  /* ---- Surfaces ---- */
+  --desk-bg: #0e1116;
+  --desk-gradient: radial-gradient(1200px 700px at 30% 0%, #1a2029 0%, #0e1116 60%);
+  --bg-window: #0c0f15;
+  --bg-titlebar: #12161e;
+  --bg-grid-header: #10141b;
+  --bg-footer: #10141b;
+  --bg-panel: #0f131b;
+  --bg-raised: #161c26;
+  --bg-hover: #141924;
+  --bg-hover-strong: #1a212e;
+  --bg-row-hover: #12161f;
+  --term-bg: #0a0d12;
+
+  /* ---- Borders ---- */
+  --border: #1f2633;
+  --border-faint: #1a212e;
+  --row-divider: #131824;
+  --card-border: #263041;
+
+  /* ---- Text ---- */
+  --text: #cdd6e4;
+  --text-secondary: #8b99b0;
+  --text-dim: #6b7a92;
+  --text-faint: #4a566b;
+  --text-xfaint: #3d475a;
+  --term-text: #aebacd;
+
+  /* ---- Accent (Postgres blue) ---- */
+  --accent: #4e9cd8;
+  --accent-light: #7cb9e8;
+  --accent-lighter: #9ecdf0;
+  --accent-bg: rgba(78, 156, 216, 0.13);
+  --accent-bg-badge: rgba(78, 156, 216, 0.16);
+  --accent-bg-strong: rgba(78, 156, 216, 0.18);
+  --accent-bg-row: rgba(78, 156, 216, 0.1);
+  --accent-bg-card-header: rgba(78, 156, 216, 0.14);
+  --accent-border: rgba(78, 156, 216, 0.3);
+  --accent-border-strong: rgba(78, 156, 216, 0.4);
+  --accent-border-card: rgba(78, 156, 216, 0.5);
+  --accent-glow: rgba(78, 156, 216, 0.08);
+  --selection: rgba(78, 156, 216, 0.35);
+
+  /* ---- Semantic colors ---- */
+  --amber: #d9b26a;
+  --amber-bg: rgba(217, 178, 106, 0.15);
+  --green: #4ec98a;
+  --red: #ff5f57;
+  --neutral-badge-bg: rgba(107, 122, 146, 0.15);
+  --er-line: #3a5f80;
+
+  /* ---- Traffic lights ---- */
+  --tl-red: #ff5f57;
+  --tl-yellow: #febc2e;
+  --tl-green: #28c840;
+
+  /* ---- Typography ---- */
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-title: 12px;
+  --fs-body: 12px;
+  --fs-cell: 11.5px;
+  --fs-tab: 11.5px;
+  --fs-button: 11px;
+  --fs-history: 11px;
+  --fs-pill: 10.5px;
+  --fs-section: 10px;
+  --fs-count: 10px;
+  --fs-type: 9.5px;
+  --fs-badge: 8.5px;
+  --fs-tag: 9px;
+  --fs-caret: 9px;
+  --fs-terminal: 12px;
+  --fs-details-title: 13px;
+  --ls-section: 0.08em;
+  --lh-terminal: 1.5;
+
+  /* ---- Layout metrics ---- */
+  --window-w: 1400px;
+  --window-h: 880px;
+  --window-radius: 12px;
+  --window-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 24px 80px rgba(0, 0, 0, 0.6);
+  --desk-padding: 36px;
+  --h-titlebar: 42px;
+  --h-toolbar: 40px;
+  --h-grid-footer: 32px;
+  --h-term-header: 30px;
+  --h-term-body: 212px;
+  --h-term-collapsed: 28px;
+  --h-resize-handle: 5px;
+  --w-sidebar: 236px;
+  --w-details: 266px;
+  --w-filter: 260px;
+  --row-h: 26px;
+
+  /* ---- Radii ---- */
+  --r-button: 6px;
+  --r-tabgroup: 7px;
+  --r-tab: 5px;
+  --r-card: 7px;
+  --r-pill: 20px;
+  --r-badge: 4px;
+  --r-badge-sm: 3px;
+  --r-chip: 4px;
+
+  /* ---- Card / ER ---- */
+  --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --card-shadow-selected: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(78, 156, 216, 0.08);
+  --er-dot-grid: radial-gradient(#1a212e 1px, transparent 1px);
+  --er-dot-size: 24px 24px;
+}
