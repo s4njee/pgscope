@@ -4,14 +4,39 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Version tag to create and publish
+        required: true
+        default: v0.1
 
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
 jobs:
-  release:
-    name: Build and publish macOS bundle
-    runs-on: macos-latest
+  build:
+    name: Build ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            label: macOS ZIP
+            artifact: pgscope-macos
+            path: dist-release/pgscope-macos.zip
+          - os: windows-latest
+            label: Windows EXE
+            artifact: pgscope-windows-x64
+            path: dist-release/pgscope-windows-x64-setup.exe
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -25,12 +50,12 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
-
       - run: pnpm install --frozen-lockfile
 
-      # Signing and notarisation run only when the secrets are configured;
-      # without them the build still produces an unsigned, locally-runnable app.
-      - name: Build
+      # Tauri signs and notarizes automatically when these secrets exist.
+      # With no secrets, the ZIP still contains a runnable unsigned .app.
+      - name: Build macOS app
+        if: runner.os == 'macOS'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
@@ -38,25 +63,73 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: pnpm tauri build
+        run: pnpm tauri build --bundles app --ci
 
-      - name: Collect artifacts
+      - name: Package macOS ZIP
+        if: runner.os == 'macOS'
+        shell: bash
         run: |
           mkdir -p dist-release
-          cp src-tauri/target/release/bundle/dmg/*.dmg dist-release/ 2>/dev/null || true
+          app_path="$(find src-tauri/target/release/bundle/macos -maxdepth 1 -name '*.app' -print -quit)"
+          test -n "$app_path"
+          ditto -c -k --sequesterRsrc --keepParent "$app_path" dist-release/pgscope-macos.zip
+
+      - name: Build Windows installer
+        if: runner.os == 'Windows'
+        run: pnpm tauri build --bundles nsis --ci
+
+      - name: Collect Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist-release | Out-Null
+          $installer = Get-ChildItem src-tauri/target/release/bundle/nsis/*.exe | Select-Object -First 1
+          if (-not $installer) { throw "Tauri did not produce an NSIS installer" }
+          Copy-Item $installer.FullName dist-release/pgscope-windows-x64-setup.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.path }}
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pgscope-*
+          path: dist-release
+          merge-multiple: true
+
+      - name: Verify release files
+        run: |
+          test -f dist-release/pgscope-macos.zip
+          test -f dist-release/pgscope-windows-x64-setup.exe
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: pgscope ${{ env.RELEASE_TAG }}
           files: dist-release/*
           generate_release_notes: true
-          draft: true
+          draft: false
           body: |
-            ## pgscope ${{ github.ref_name }}
+            ## pgscope ${{ env.RELEASE_TAG }}
 
             A desktop PostgreSQL explorer with a docked psql pane.
 
-            <!-- Summarise notable changes here before publishing. -->
+            ### Downloads
 
-            **Note:** unsigned builds require a right-click → Open on first
-            launch, or `xattr -dr com.apple.quarantine /Applications/pgscope.app`.
+            - **macOS:** `pgscope-macos.zip`
+            - **Windows:** `pgscope-windows-x64-setup.exe`
+
+            Unsigned macOS builds may require right-click → Open on first
+            launch, or:
+
+            ```sh
+            xattr -dr com.apple.quarantine /Applications/pgscope.app
+            ```
