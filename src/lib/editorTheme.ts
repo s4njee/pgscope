@@ -5,27 +5,28 @@ import { tags as t } from '@lezer/highlight'
 /**
  * CodeMirror theme built from the design tokens.
  *
- * The values are hard-coded rather than read from CSS variables because
- * CodeMirror compiles styles into a stylesheet at construction time and cannot
- * resolve `var()` for everything it computes. They mirror `theme/tokens.css`
- * exactly — if a token changes there, change it here too.
+ * CSS custom properties keep the editor in sync with the app theme without
+ * rebuilding the editor (and losing its selection/history) when it changes.
  */
 const C = {
-  bg: '#0c0f15',
-  text: '#cdd6e4',
-  secondary: '#8b99b0',
-  dim: '#6b7a92',
-  faint: '#4a566b',
-  xfaint: '#3d475a',
-  border: '#1f2633',
-  borderFaint: '#1a212e',
-  accent: '#4e9cd8',
-  accentLight: '#7cb9e8',
-  amber: '#d9b26a',
-  green: '#4ec98a',
-  red: '#ff5f57',
-  selection: 'rgba(78,156,216,0.35)',
-  activeLine: '#12161f',
+  bg: 'var(--bg-window)',
+  panel: 'var(--bg-panel)',
+  titlebar: 'var(--bg-titlebar)',
+  raised: 'var(--bg-raised)',
+  text: 'var(--text)',
+  secondary: 'var(--text-secondary)',
+  dim: 'var(--text-dim)',
+  faint: 'var(--text-faint)',
+  xfaint: 'var(--text-xfaint)',
+  border: 'var(--border)',
+  borderFaint: 'var(--border-faint)',
+  accent: 'var(--accent)',
+  accentLight: 'var(--accent-light)',
+  amber: 'var(--amber)',
+  green: 'var(--green)',
+  red: 'var(--red)',
+  selection: 'var(--selection)',
+  activeLine: 'var(--bg-row-hover)',
 } as const
 
 export const pgscopeEditorTheme = EditorView.theme(
@@ -62,15 +63,15 @@ export const pgscopeEditorTheme = EditorView.theme(
     '.cm-lineNumbers .cm-gutterElement': { padding: '0 8px 0 6px' },
     '.cm-activeLineGutter': { backgroundColor: C.activeLine, color: C.dim },
     '.cm-matchingBracket, &.cm-focused .cm-matchingBracket': {
-      backgroundColor: 'rgba(78,156,216,0.18)',
+      backgroundColor: 'var(--accent-bg-strong)',
       color: C.accentLight,
       outline: 'none',
     },
     '.cm-nonmatchingBracket': { color: C.red },
-    '.cm-searchMatch': { backgroundColor: 'rgba(217,178,106,0.20)' },
-    '.cm-searchMatch.cm-searchMatch-selected': { backgroundColor: 'rgba(217,178,106,0.38)' },
+    '.cm-searchMatch': { backgroundColor: 'var(--amber-bg)' },
+    '.cm-searchMatch.cm-searchMatch-selected': { backgroundColor: 'var(--amber-bg-strong)' },
     '.cm-panels': {
-      backgroundColor: '#0f131b',
+      backgroundColor: C.panel,
       color: C.secondary,
       border: 'none',
       borderTop: `1px solid ${C.border}`,
@@ -78,7 +79,7 @@ export const pgscopeEditorTheme = EditorView.theme(
     },
     '.cm-panel input, .cm-panel button': {
       fontFamily: "'IBM Plex Mono', monospace",
-      backgroundColor: '#12161e',
+      backgroundColor: C.titlebar,
       color: C.text,
       border: `1px solid ${C.border}`,
       borderRadius: '4px',
@@ -86,10 +87,10 @@ export const pgscopeEditorTheme = EditorView.theme(
     },
     // Autocomplete popup, styled like the app's raised panels.
     '.cm-tooltip': {
-      backgroundColor: '#161c26',
+      backgroundColor: C.raised,
       border: `1px solid ${C.border}`,
       borderRadius: '6px',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+      boxShadow: 'var(--card-shadow)',
     },
     '.cm-tooltip.cm-tooltip-autocomplete > ul': {
       fontFamily: "'IBM Plex Mono', monospace",
@@ -98,13 +99,12 @@ export const pgscopeEditorTheme = EditorView.theme(
     },
     '.cm-tooltip.cm-tooltip-autocomplete > ul > li': { padding: '3px 8px' },
     '.cm-tooltip-autocomplete ul li[aria-selected]': {
-      backgroundColor: 'rgba(78,156,216,0.18)',
+      backgroundColor: 'var(--accent-bg-strong)',
       color: C.accentLight,
     },
     '.cm-completionLabel': { color: C.text },
     '.cm-completionDetail': { color: C.faint, fontStyle: 'normal', marginLeft: '8px' },
   },
-  { dark: true },
 )
 
 /**

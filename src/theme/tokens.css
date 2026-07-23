@@ -51,10 +51,15 @@
   /* ---- Semantic colors ---- */
   --amber: #d9b26a;
   --amber-bg: rgba(217, 178, 106, 0.15);
+  --amber-bg-strong: rgba(217, 178, 106, 0.38);
   --green: #4ec98a;
   --red: #ff5f57;
+  --red-bg: rgba(255, 95, 87, 0.16);
   --neutral-badge-bg: rgba(107, 122, 146, 0.15);
   --er-line: #3a5f80;
+  --scrollbar-thumb: #232b3a;
+  --close-hover: rgba(255, 255, 255, 0.08);
+  --scrim: rgba(6, 8, 12, 0.6);
 
   /* ---- Traffic lights ---- */
   --tl-red: #ff5f57;
@@ -112,6 +117,103 @@
   /* ---- Card / ER ---- */
   --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   --card-shadow-selected: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(78, 156, 216, 0.08);
+  --context-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   --er-dot-grid: radial-gradient(#1a212e 1px, transparent 1px);
   --er-dot-size: 24px 24px;
+}
+
+/* Pure-black theme for OLED screens and distraction-free work. */
+[data-theme='black'] {
+  --desk-bg: #000000;
+  --desk-gradient: radial-gradient(1200px 700px at 30% 0%, #101010 0%, #000000 60%);
+  --bg-window: #000000;
+  --bg-titlebar: #050505;
+  --bg-grid-header: #070707;
+  --bg-footer: #070707;
+  --bg-panel: #080808;
+  --bg-raised: #111111;
+  --bg-hover: #121212;
+  --bg-hover-strong: #191919;
+  --bg-row-hover: #0d0d0d;
+  --term-bg: #000000;
+
+  --border: #282828;
+  --border-faint: #1d1d1d;
+  --row-divider: #171717;
+  --card-border: #333333;
+
+  --text: #e2e5e9;
+  --text-secondary: #a5adb8;
+  --text-dim: #7e8794;
+  --text-faint: #5e6672;
+  --text-xfaint: #4b525c;
+  --term-text: #c1c7d0;
+
+  --scrollbar-thumb: #303030;
+  --er-line: #416b8d;
+  --window-shadow: 0 0 0 1px rgba(255, 255, 255, 0.09), 0 24px 80px rgba(0, 0, 0, 0.8);
+  --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+  --card-shadow-selected: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 0 3px rgba(78, 156, 216, 0.1);
+  --context-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  --er-dot-grid: radial-gradient(#222222 1px, transparent 1px);
+}
+
+/* Light theme keeps the Postgres-blue accent while restoring daytime contrast. */
+[data-theme='light'] {
+  --desk-bg: #e8ecf1;
+  --desk-gradient: radial-gradient(1200px 700px at 30% 0%, #ffffff 0%, #e8ecf1 60%);
+  --bg-window: #f7f8fa;
+  --bg-titlebar: #eef1f5;
+  --bg-grid-header: #f1f3f6;
+  --bg-footer: #f1f3f6;
+  --bg-panel: #fafbfc;
+  --bg-raised: #ffffff;
+  --bg-hover: #e9edf2;
+  --bg-hover-strong: #e1e7ee;
+  --bg-row-hover: #f0f3f7;
+  --term-bg: #ffffff;
+
+  --border: #d3dae3;
+  --border-faint: #e1e6ec;
+  --row-divider: #e6eaf0;
+  --card-border: #c7d0dc;
+
+  --text: #1f2937;
+  --text-secondary: #4e5d70;
+  --text-dim: #68768a;
+  --text-faint: #8792a2;
+  --text-xfaint: #a2abb8;
+  --term-text: #334155;
+
+  --accent: #256fa8;
+  --accent-light: #1f6398;
+  --accent-lighter: #174f7c;
+  --accent-bg: rgba(37, 111, 168, 0.1);
+  --accent-bg-badge: rgba(37, 111, 168, 0.13);
+  --accent-bg-strong: rgba(37, 111, 168, 0.15);
+  --accent-bg-row: rgba(37, 111, 168, 0.08);
+  --accent-bg-card-header: rgba(37, 111, 168, 0.11);
+  --accent-border: rgba(37, 111, 168, 0.32);
+  --accent-border-strong: rgba(37, 111, 168, 0.45);
+  --accent-border-card: rgba(37, 111, 168, 0.55);
+  --accent-glow: rgba(37, 111, 168, 0.08);
+  --selection: rgba(37, 111, 168, 0.26);
+
+  --amber: #956118;
+  --amber-bg: rgba(149, 97, 24, 0.13);
+  --amber-bg-strong: rgba(149, 97, 24, 0.25);
+  --green: #18784b;
+  --red: #c43d36;
+  --red-bg: rgba(196, 61, 54, 0.12);
+  --neutral-badge-bg: rgba(78, 93, 112, 0.12);
+  --er-line: #6686a1;
+  --scrollbar-thumb: #bec6d0;
+  --close-hover: rgba(31, 41, 55, 0.08);
+  --scrim: rgba(31, 41, 55, 0.35);
+
+  --window-shadow: 0 0 0 1px rgba(31, 41, 55, 0.08), 0 24px 80px rgba(31, 41, 55, 0.2);
+  --card-shadow: 0 8px 24px rgba(31, 41, 55, 0.12);
+  --card-shadow-selected: 0 8px 24px rgba(31, 41, 55, 0.12), 0 0 0 3px rgba(37, 111, 168, 0.1);
+  --context-shadow: 0 8px 24px rgba(31, 41, 55, 0.18);
+  --er-dot-grid: radial-gradient(#d5dbe3 1px, transparent 1px);
 }

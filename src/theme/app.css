@@ -76,6 +76,31 @@
   color: var(--text-secondary);
 }
 
+.theme-switcher {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-tabgroup);
+  background: var(--bg-window);
+}
+
+.theme-switcher__option {
+  padding: 3px 7px;
+  border-radius: var(--r-tab);
+  color: var(--text-dim);
+  font-size: var(--fs-count);
+}
+
+.theme-switcher__option:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.theme-switcher__option--active {
+  color: var(--accent-lighter);
+  background: var(--accent-bg-strong);
+}
+
 .conn-pill {
   display: flex;
   align-items: center;
@@ -984,7 +1009,7 @@
 }
 .tab__close:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--close-hover);
 }
 
 .qe {
@@ -1240,7 +1265,7 @@
   flex-shrink: 0;
 }
 .plan-badge--hot {
-  background: rgba(255, 95, 87, 0.16);
+  background: var(--red-bg);
   color: var(--tl-red);
 }
 .plan-badge--warn {
@@ -1297,7 +1322,7 @@
 .modal-scrim {
   position: fixed;
   inset: 0;
-  background: rgba(6, 8, 12, 0.6);
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1563,7 +1588,7 @@ select.field__input {
   background: var(--bg-raised);
   border: 1px solid var(--border);
   border-radius: var(--r-button);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--context-shadow);
   display: flex;
   flex-direction: column;
 }

@@ -18,7 +18,7 @@ import { useUi } from './state/ui'
 
 export default function App() {
   const [platform, setPlatform] = useState('macos')
-  const { activeTab, showDetails, toggleDetails, setTab } = useUi()
+  const { activeTab, theme, showDetails, toggleDetails, setTab } = useUi()
   const connState = useConnection((s) => s.state)
   const setStatus = useConnection((s) => s.setStatus)
   const openModal = useConnection((s) => s.openModal)
@@ -29,6 +29,11 @@ export default function App() {
   useEffect(() => {
     ipc.platform().then(setPlatform).catch(() => setPlatform('macos'))
   }, [])
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme === 'light' ? 'light' : 'dark'
+  }, [theme])
 
   // Live connection status from the backend pinger.
   useEffect(() => {
@@ -92,7 +97,7 @@ export default function App() {
   }, [toggleDetails, setTab, openTab])
 
   return (
-    <div className="window">
+    <div className="window" data-theme={theme}>
       <Titlebar platform={platform} />
       <Toolbar />
 

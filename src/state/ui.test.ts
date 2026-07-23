@@ -48,4 +48,15 @@ describe('rehydration', () => {
 
     expect(useUi.getState().terminalHeight).toBe(490)
   })
+
+  it('restores the selected color theme', async () => {
+    localStorage.setItem(
+      'pgscope.ui',
+      JSON.stringify({ state: { theme: 'black' }, version: 0 }),
+    )
+
+    await useUi.persist.rehydrate()
+
+    expect(useUi.getState().theme).toBe('black')
+  })
 })
