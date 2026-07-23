@@ -516,19 +516,18 @@ fn render_messages(messages: Vec<SimpleQueryMessage>, expanded: bool) -> Vec<Seg
                     }
                 }
             }
-            SimpleQueryMessage::CommandComplete(_) => {
-                if current.is_some() {
-                    flush(
-                        &mut current,
-                        &mut segments,
-                        &mut truncated_from,
-                        &mut total_rows,
-                    );
-                }
+            SimpleQueryMessage::CommandComplete(_) if current.is_some() => {
+                flush(
+                    &mut current,
+                    &mut segments,
+                    &mut truncated_from,
+                    &mut total_rows,
+                );
                 // A tag with no preceding rows (INSERT/SET/CREATE) — the
                 // driver doesn't expose the tag text, so report the row count
                 // the way psql's tag would read for DML.
             }
+            SimpleQueryMessage::CommandComplete(_) => {}
             _ => {}
         }
     }

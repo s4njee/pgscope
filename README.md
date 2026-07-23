@@ -426,6 +426,7 @@ from anything that needs a database.
 ## Status
 
 The Data, Relationships, and terminal surfaces are implemented and wired to a
-live database. See [tasks.md](tasks.md) for what is done and what remains — the
-main remaining gaps are code signing/notarisation (wired into the release
-workflow but never run) and Windows, which has never been executed.
+live database. See [tasks.md](tasks.md) for what is done and what remains.
+Tagged releases publish a zipped macOS app and a Windows NSIS installer.
+Code signing and notarisation are used automatically when the corresponding
+Apple secrets are configured; otherwise the macOS archive is unsigned.
