@@ -2,6 +2,13 @@ import { useConnection, windowTitle } from '../state/connection'
 import { ipc } from '../lib/ipc'
 import { formatLatency } from '../lib/format'
 import type { ConnectionState } from '../lib/types'
+import { useUi, type Theme } from '../state/ui'
+
+const themes: { value: Theme; label: string; shortLabel: string }[] = [
+  { value: 'dark', label: 'Dark theme', shortLabel: 'Dark' },
+  { value: 'black', label: 'Black theme', shortLabel: 'Black' },
+  { value: 'light', label: 'Light theme', shortLabel: 'Light' },
+]
 
 /**
  * Text for the connection pill. A null latency means no ping has come back yet,
@@ -57,6 +64,8 @@ interface Props {
  */
 export function Titlebar({ platform }: Props) {
   const { state, info, latencyMs, openModal } = useConnection()
+  const theme = useUi((s) => s.theme)
+  const setTheme = useUi((s) => s.setTheme)
   const isMac = platform === 'macos'
 
   return (
@@ -86,6 +95,23 @@ export function Titlebar({ platform }: Props) {
 
       <div className="titlebar__title" data-tauri-drag-region>
         {windowTitle(info)}
+      </div>
+
+      <div className="theme-switcher" role="group" aria-label="Color theme">
+        {themes.map((option) => (
+          <button
+            key={option.value}
+            className={`theme-switcher__option${
+              theme === option.value ? ' theme-switcher__option--active' : ''
+            }`}
+            aria-label={option.label}
+            aria-pressed={theme === option.value}
+            title={option.label}
+            onClick={() => setTheme(option.value)}
+          >
+            {option.shortLabel}
+          </button>
+        ))}
       </div>
 
       <button

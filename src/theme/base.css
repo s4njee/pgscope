@@ -43,7 +43,7 @@ a:hover {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #232b3a;
+  background: var(--scrollbar-thumb);
   border-radius: 5px;
   border: 2px solid var(--bg-window);
 }

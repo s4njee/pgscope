@@ -12,6 +12,7 @@ import { clampTerminalHeight, TERM_BODY_DEFAULT } from '../lib/paneSize'
  * design.
  */
 export type Tab = 'data' | 'relationships' | 'query'
+export type Theme = 'dark' | 'black' | 'light'
 
 /**
  * Window height, or the design's window height when there is no DOM.
@@ -26,11 +27,13 @@ const viewportHeight = () =>
 
 interface UiState {
   activeTab: Tab
+  theme: Theme
   showDetails: boolean
   terminalCollapsed: boolean
   /** Height of `.term__body` in px; the header sits above it at a fixed height. */
   terminalHeight: number
   setTab: (t: Tab) => void
+  setTheme: (theme: Theme) => void
   toggleDetails: () => void
   setDetails: (v: boolean) => void
   toggleTerminal: () => void
@@ -53,10 +56,12 @@ export const useUi = create<UiState>()(
   persist(
     (set) => ({
       activeTab: 'data',
+      theme: 'dark',
       showDetails: true,
       terminalCollapsed: false,
       terminalHeight: TERM_BODY_DEFAULT,
       setTab: (activeTab) => set({ activeTab }),
+      setTheme: (theme) => set({ theme }),
       toggleDetails: () => set((s) => ({ showDetails: !s.showDetails })),
       setDetails: (showDetails) => set({ showDetails }),
       toggleTerminal: () => set((s) => ({ terminalCollapsed: !s.terminalCollapsed })),
@@ -70,6 +75,7 @@ export const useUi = create<UiState>()(
       name: 'pgscope.ui',
       partialize: (s) => ({
         activeTab: s.activeTab,
+        theme: s.theme,
         showDetails: s.showDetails,
         terminalCollapsed: s.terminalCollapsed,
         terminalHeight: s.terminalHeight,
