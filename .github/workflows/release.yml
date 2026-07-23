@@ -52,18 +52,11 @@ jobs:
           workspaces: src-tauri
       - run: pnpm install --frozen-lockfile
 
-      # Tauri signs and notarizes automatically when these secrets exist.
-      # With no secrets, the ZIP still contains a runnable unsigned .app.
-      - name: Build macOS app
+      # Release unsigned until a validated Developer ID certificate and
+      # notarization credentials are configured.
+      - name: Build unsigned macOS app
         if: runner.os == 'macOS'
-        env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        run: pnpm tauri build --bundles app --ci
+        run: pnpm tauri build --bundles app --ci --no-sign
 
       - name: Package macOS ZIP
         if: runner.os == 'macOS'

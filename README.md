@@ -428,5 +428,5 @@ from anything that needs a database.
 The Data, Relationships, and terminal surfaces are implemented and wired to a
 live database. See [tasks.md](tasks.md) for what is done and what remains.
 Tagged releases publish a zipped macOS app and a Windows NSIS installer.
-Code signing and notarisation are used automatically when the corresponding
-Apple secrets are configured; otherwise the macOS archive is unsigned.
+The macOS archive is currently unsigned; code signing and notarisation remain
+future release-hardening work.
